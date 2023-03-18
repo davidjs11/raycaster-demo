@@ -6,11 +6,17 @@ Raycasting is a popular 3D rendering method used in the first 3D games back int 
 
 ### Current status:
 I've implemented the player and the rays in the map. These rays will calculate the distance between the player and the objects in front of it.
+![current_status](screenshots/first_rays.png)
 
+### To-do:
+- Start rendering the vertical lines for the 3D view.
+- Make the code more modular.
+- Add colors and textures.
+- Improve input system.
+- Add UI.
+- Game mechanics????
 
 ### How to use it
 Simply use the ```make``` command to compile the project. Then, run the binary file in the ./bin folder using ```./bin/raycaster```. Make sure you have the SDL2 library installed on your system.
-
-![current_status](screenshots/first_rays.png)
 
 Big thanks to user [ssloy](https://github.com/ssloy) for creating the [tinyraycaster](https://github.com/ssloy/tinyraycaster) guide. It has been a really useful resource for learning how this method works.
