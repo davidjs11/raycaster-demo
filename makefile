@@ -6,7 +6,7 @@ INCLUDE	= $(HOME)/include
 OBJ	= $(HOME)/obj
 BIN	= $(HOME)/bin
 
-FLAGS	= -lSDL2
+FLAGS	= -lSDL2 -lm
 
 # binary 
 $(BIN)/raycaster:\
