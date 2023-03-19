@@ -12,12 +12,14 @@ FLAGS	= -lSDL2 -lm
 $(BIN)/raycaster:\
 	$(OBJ)/raycaster.o\
 	$(OBJ)/graphUtils.o\
-	$(OBJ)/sdlUtils.o
+	$(OBJ)/sdlUtils.o\
+	$(OBJ)/gameUtils.o
 	@echo "creating binary..."
 	@gcc -o  $(BIN)/raycaster\
 		$(OBJ)/raycaster.o\
 		$(OBJ)/graphUtils.o\
 		$(OBJ)/sdlUtils.o\
+		$(OBJ)/gameUtils.o\
 		$(FLAGS)
 
 # objects
@@ -45,6 +47,15 @@ $(OBJ)/sdlUtils.o:\
 	@gcc -c -o $(OBJ)/sdlUtils.o\
 		  $(SRC)/sdlUtils.c\
 		-I$(INCLUDE) $(FLAGS)
+
+$(OBJ)/gameUtils.o:\
+	$(SRC)/gameUtils.c\
+	$(INCLUDE)/gameUtils.h
+	@echo "compiling gameUtils..."
+	@gcc -c -o $(OBJ)/gameUtils.o\
+		  $(SRC)/gameUtils.c\
+		-I$(INCLUDE) $(FLAGS)
+
 
 # cleaning
 clean:

@@ -3,16 +3,14 @@
 #include <SDL2/SDL.h>
 #include "graphUtils.h"
 #include "sdlUtils.h"
+#include "gameUtils.h"
 
 int main(void)
 {
     // screen variables
-    const size_t winX = 512;
-    const size_t winY = 512;
+    const size_t winX = 640;
+    const size_t winY = 640;
     uint32_t framebuffer[winX * winY];
-
-    for (int i=0; i<winX*winY; i++)
-	framebuffer[i] = 0x00000000;
 
     // map variables
     const size_t mapX = 16;
@@ -41,18 +39,20 @@ int main(void)
     // sdl variables
     SDL_Window *window;
     SDL_Renderer *rend;
-    initSDL("raycaster", &window, &rend, winX, winY);
     SDL_Event event;
     uint8_t input[6] = {0};
 
     // game variables
     uint8_t viewMap = 0;
-    float playerX = 1;
-    float playerY = 1;
-    float playerAngle = 0;
-    float viewAngle = 0;
+    struct entity player = {1, 1, 0, 0.1, 0.1};
+
+    // rendering variables
+    float viewAngle;
     float castX = 0, castY = 0;
     float fov = M_PI/3.0; // 60º
+
+    // init the graphic engine
+    initSDL("raycaster", &window, &rend, winX, winY);
 
     // game loop
     uint8_t running = 1;
@@ -63,36 +63,29 @@ int main(void)
 	running = !(input[KEY_QUIT]);
 
 	// controls
-	playerX += 0.1*(cos(playerAngle)*input[KEY_W]		//position
-			+ cos(M_PI+playerAngle)*input[KEY_S]);
-	playerY += 0.1*(sin(playerAngle)*input[KEY_W]
-			+ sin(M_PI+playerAngle)*input[KEY_S]);
-	playerAngle += 0.1 * (input[KEY_D] - input[KEY_A]);	//angle
+	moveEntity(&player, input[KEY_W], input[KEY_S]);
+	rotateEntity(&player, input[KEY_A], input[KEY_D]);
 	viewMap = input[KEY_M];					//map
 
 	// render background
 	clearBuffer(framebuffer, winX, winY, 0x00000000);
 
-	viewAngle = playerAngle;
+	viewAngle = player.angle;
 	
 	// render the map 
 	if (viewMap)
-	{
 	    renderMap(framebuffer, map, mapX, mapY, winX, winY, boxX, boxY);
-
-	    // render player
-	    renderRect(framebuffer, winX, winY, playerX*boxX, playerY*boxY,
-			    1, 1, 0x00FFFFFF);
-	}
 
 	// cast rays and create the 3D view
 	for (int i=0; i<winX; i++)
 	{
-	    viewAngle = playerAngle-fov/2 + fov*i/winX;
-	    for (float j=0; j<16; j+=0.01)
+	    // modify ray direction
+	    viewAngle = player.angle-fov/2 + fov*i/winX;
+	    for (float j=0; j<16; j+=0.025)
 	    {
-		castX = playerX + j*cos(viewAngle);
-		castY = playerY + j*sin(viewAngle);
+		// move the point to form the ray
+		castX = player.posX + j*cos(viewAngle);
+		castY = player.posY + j*sin(viewAngle);
 		char wall = map[(int)castX + (int)castY*mapX];
 
 		// set color
@@ -100,7 +93,7 @@ int main(void)
 		else if (wall == '2') color = 0x0000FF00;
 		else if (wall == '3') color = 0x00FF0000;
 
-		// render lines
+		// render map rays
 		if (viewMap)
 		{
 		    int pX = castX * boxX;

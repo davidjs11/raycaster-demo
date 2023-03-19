@@ -38,7 +38,7 @@ void renderMap(uint32_t *buffer, const char *map, size_t mapX, size_t mapY,
 	{
 	    wall = map[i+j*mapX];
 	    if (wall == ' ')
-		color = 0x00000000; 
+		continue;
 	    else if (wall == '0')
 		color = 0x0000FFFF;
 	    else if (wall == '1')
