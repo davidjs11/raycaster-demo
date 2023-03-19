@@ -36,6 +36,7 @@ int main(void)
 	"1  2        2330"\
 	"1           2  0"\
 	"1111111111111111";
+    uint32_t color = 0x00000000;
 
     // sdl variables
     SDL_Window *window;
@@ -45,9 +46,9 @@ int main(void)
 
 
     // game variables
-    uint8_t renderMap = 1;
-    float playerX = 3.1415;
-    float playerY = 2.7182;
+    uint8_t renderMap = 0;
+    float playerX = 1;
+    float playerY = 1;
     float playerAngle = 0;
     float viewAngle = 0;
     float castX = 0, castY = 0;
@@ -69,15 +70,24 @@ int main(void)
 		    playerX += 0.1*cos(playerAngle);
 		    playerY += 0.1*sin(playerAngle);
 		}
+
 		if (event.key.keysym.sym == SDLK_s)
 		{
 		    playerX += 0.1*cos(3.141592+playerAngle);
 		    playerY += 0.1*sin(3.151592+playerAngle);
 		}
+
 		if (event.key.keysym.sym == SDLK_a)
 		    playerAngle-=0.1;
+
 		if (event.key.keysym.sym == SDLK_d)
 		    playerAngle+=0.1;
+
+		if (event.key.keysym.sym == SDLK_m)
+		    renderMap = !renderMap;
+
+		if (event.key.keysym.sym == SDLK_q)
+		    running = 0;
 	    }
 	}
 
@@ -92,33 +102,59 @@ int main(void)
 	    // render rects
 	    for (int i=0; i<mapX; i++)
 		for (int j=0; j<mapY; j++)
-		    if (map[j*mapX+i] != ' ')
-			renderRect(framebuffer, winX, winY, i*boxX, j*boxY,
-			    boxX, boxY, 0x00FFFFFF);   
+		{
+		    if (map[j*mapX+i] == ' ')
+			color = 0x00000000;
+		    else if (map[j*mapX+i] == '1')
+			color = 0x000000FF;
+		    else if (map[j*mapX+i] == '2')
+			color = 0x0000FF00; 
+		    else if (map[j*mapX+i] == '3')
+			color = 0x00FF0000;
+		    renderRect(framebuffer, winX, winY, i*boxX,
+			    j*boxY, boxX, boxY, color);
+		}
 
 	    // render player
 	    renderRect(framebuffer, winX, winY, playerX*boxX, playerY*boxY,
-			    5, 5, 0x00FFFFFF);
+			    1, 1, 0x00FFFFFF);
 	}
 
-	// cast winX rays from playerAngle-fov/2 to playerAngle+fov/2
-	// by increasing fov*(winX/winX)=fov
+	// cast rays and create the 3D view
 	for (int i=0; i<winX; i++)
 	{
-	    float distance = 0;
 	    viewAngle = playerAngle-fov/2 + fov*i/winX;
-	    for (float i=0; i<16; i+=0.05)
+	    for (float j=0; j<16; j+=0.01)
 	    {
-		castX = playerX + i*cos(viewAngle);
-		castY = playerY + i*sin(viewAngle);
-		if (map[(int)castX + (int)castY*mapX] != ' ') break;
+		castX = playerX + j*cos(viewAngle);
+		castY = playerY + j*sin(viewAngle);
+		char wall = map[(int)castX + (int)castY*mapX];
 
-		int pX = castX * boxX;
-		int pY = castY * boxY;
-		framebuffer[pX + pY*winY] = 0x000000FF; 
-		distance+=0.05;
+		// set color
+		if (wall == '1') color = 0x000000FF;
+		else if (wall == '2') color = 0x0000FF00;
+		else if (wall == '3') color = 0x00FF0000;
+
+		// render lines
+		if (renderMap)
+		{
+		    int pX = castX * boxX;
+		    int pY = castY * boxY;
+		    if (wall != ' ') break;
+		    framebuffer[pX + pY*winY] = 0x00FFFFFF; 
+		}
+
+		// render the line whose length will depend on how far the next
+		// object is
+		if (!renderMap && wall != ' ')
+		{
+		    size_t columnHeight = winY/j;
+
+		    renderRect(framebuffer, winX, winY, i, winY/2-columnHeight/2,
+			       1, columnHeight, color);
+		    break;
+		}
 	    }
-	    printf("distance: %f\n", distance);
 	}
 
 
