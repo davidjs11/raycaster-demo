@@ -46,7 +46,7 @@ int main(void)
     uint8_t input[6] = {0};
 
     // game variables
-    uint8_t renderMap = 0;
+    uint8_t viewMap = 0;
     float playerX = 1;
     float playerY = 1;
     float playerAngle = 0;
@@ -68,7 +68,7 @@ int main(void)
 	playerY += 0.1*(sin(playerAngle)*input[KEY_W]
 			+ sin(M_PI+playerAngle)*input[KEY_S]);
 	playerAngle += 0.1 * (input[KEY_D] - input[KEY_A]);	//angle
-	renderMap = input[KEY_M];				//map
+	viewMap = input[KEY_M];					//map
 
 	// render background
 	clearBuffer(framebuffer, winX, winY, 0x00000000);
@@ -76,23 +76,9 @@ int main(void)
 	viewAngle = playerAngle;
 	
 	// render the map 
-	if (renderMap)
+	if (viewMap)
 	{
-	    // render rects
-	    for (int i=0; i<mapX; i++)
-		for (int j=0; j<mapY; j++)
-		{
-		    if (map[j*mapX+i] == ' ')
-			color = 0x00000000;
-		    else if (map[j*mapX+i] == '1')
-			color = 0x000000FF;
-		    else if (map[j*mapX+i] == '2')
-			color = 0x0000FF00; 
-		    else if (map[j*mapX+i] == '3')
-			color = 0x00FF0000;
-		    renderRect(framebuffer, winX, winY, i*boxX,
-			    j*boxY, boxX, boxY, color);
-		}
+	    renderMap(framebuffer, map, mapX, mapY, winX, winY, boxX, boxY);
 
 	    // render player
 	    renderRect(framebuffer, winX, winY, playerX*boxX, playerY*boxY,
@@ -115,7 +101,7 @@ int main(void)
 		else if (wall == '3') color = 0x00FF0000;
 
 		// render lines
-		if (renderMap)
+		if (viewMap)
 		{
 		    int pX = castX * boxX;
 		    int pY = castY * boxY;
@@ -125,7 +111,7 @@ int main(void)
 
 		// render the line whose length will depend on how far the next
 		// object is
-		if (!renderMap && wall != ' ')
+		if (!viewMap && wall != ' ')
 		{
 		    size_t columnHeight = winY/j;
 
@@ -136,16 +122,8 @@ int main(void)
 	    }
 	}
 
-
-	// render framebuffer
-	for (int i=0; i<winX; i++)
-	    for (int j=0; j<winY; j++)
-	    {
-		setColor(rend, framebuffer[i+j*winX]);
-		SDL_RenderDrawPoint(rend, i, j);
-	    }
-
-	SDL_RenderPresent(rend);
+	// render the buffer
+	renderBuffer(rend, framebuffer, winX, winY);
     }
 
 }

@@ -19,4 +19,8 @@ void setColor(SDL_Renderer *rend, uint32_t color);
 // process an input array
 void processInput(SDL_Event *event, uint8_t *input);
 
+// render the frame buffer
+void renderBuffer(SDL_Renderer *rend, uint32_t *buffer,
+	    size_t winX, size_t winY);
+
 #endif

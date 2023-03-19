@@ -67,3 +67,14 @@ void processInput(SDL_Event *event, uint8_t *input)
 		input[KEY_M] = 0;
     }
 }
+
+void renderBuffer(SDL_Renderer *rend, uint32_t *buffer, size_t winX, size_t winY)
+{
+    for (int i=0; i<winX; i++)
+	for (int j=0; j<winY; j++)
+	{
+	    setColor(rend, buffer[i+j*winX]);
+	    SDL_RenderDrawPoint(rend, i, j);
+	}
+    SDL_RenderPresent(rend);
+}
