@@ -30,3 +30,40 @@ void setColor(SDL_Renderer *rend, uint32_t color)
 	    (color >> 16) & 255,
 	    (color >> 24) & 255);
 }
+
+void processInput(SDL_Event *event, uint8_t *input)
+{
+    while (SDL_PollEvent(event))
+    {
+	if (event->type == SDL_QUIT)
+	    input[KEY_QUIT] = 1;
+
+	if (event->type == SDL_KEYDOWN)
+	    if (event->key.keysym.sym == SDLK_q)
+		input[KEY_QUIT] = 1;
+	    else if (event->key.keysym.sym == SDLK_w)
+		input[KEY_W] = 1;
+	    else if (event->key.keysym.sym == SDLK_a)
+		input[KEY_A] = 1;
+	    else if (event->key.keysym.sym == SDLK_s)
+		input[KEY_S] = 1;
+	    else if (event->key.keysym.sym == SDLK_d)
+		input[KEY_D] = 1;
+	    else if (event->key.keysym.sym == SDLK_m)
+		input[KEY_M] = 1;
+
+	if (event->type == SDL_KEYUP)
+	    if (event->key.keysym.sym == SDLK_q)
+		input[KEY_QUIT] = 0;
+	    else if (event->key.keysym.sym == SDLK_w)
+		input[KEY_W] = 0;
+	    else if (event->key.keysym.sym == SDLK_a)
+		input[KEY_A] = 0;
+	    else if (event->key.keysym.sym == SDLK_s)
+		input[KEY_S] = 0;
+	    else if (event->key.keysym.sym == SDLK_d)
+		input[KEY_D] = 0;
+	    else if (event->key.keysym.sym == SDLK_m)
+		input[KEY_M] = 0;
+    }
+}

@@ -20,3 +20,9 @@ void renderRect(uint32_t *buffer, size_t bufX, size_t bufY, size_t posX,
 	}
 }
 
+void clearBuffer(uint32_t *buffer, size_t bufX, size_t bufY, uint32_t color)
+{
+    for (int i=0; i<bufX; i++)
+	for (int j=0; j<bufY; j++)
+	    buffer[i+j*bufX] = color;
+}

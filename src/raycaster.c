@@ -43,7 +43,7 @@ int main(void)
     SDL_Renderer *rend;
     initSDL("raycaster", &window, &rend, winX, winY);
     SDL_Event event;
-
+    uint8_t input[6] = {0};
 
     // game variables
     uint8_t renderMap = 0;
@@ -54,45 +54,24 @@ int main(void)
     float castX = 0, castY = 0;
     float fov = M_PI/3.0; // 60º
 
+    // game loop
     uint8_t running = 1;
     while (running)
     {
 	// input
-	while (SDL_PollEvent(&event))
-	{
-	    if (event.type == SDL_QUIT)
-		running = 0;
+	processInput(&event, input);
+	running = !(input[KEY_QUIT]);
 
-	    if (event.type == SDL_KEYDOWN)
-	    {
-		if (event.key.keysym.sym == SDLK_w)
-		{
-		    playerX += 0.1*cos(playerAngle);
-		    playerY += 0.1*sin(playerAngle);
-		}
-
-		if (event.key.keysym.sym == SDLK_s)
-		{
-		    playerX += 0.1*cos(3.141592+playerAngle);
-		    playerY += 0.1*sin(3.151592+playerAngle);
-		}
-
-		if (event.key.keysym.sym == SDLK_a)
-		    playerAngle-=0.1;
-
-		if (event.key.keysym.sym == SDLK_d)
-		    playerAngle+=0.1;
-
-		if (event.key.keysym.sym == SDLK_m)
-		    renderMap = !renderMap;
-
-		if (event.key.keysym.sym == SDLK_q)
-		    running = 0;
-	    }
-	}
+	// controls
+	playerX += 0.1*(cos(playerAngle)*input[KEY_W]		//position
+			+ cos(M_PI+playerAngle)*input[KEY_S]);
+	playerY += 0.1*(sin(playerAngle)*input[KEY_W]
+			+ sin(M_PI+playerAngle)*input[KEY_S]);
+	playerAngle += 0.1 * (input[KEY_D] - input[KEY_A]);	//angle
+	renderMap = input[KEY_M];				//map
 
 	// render background
-	renderRect(framebuffer, winX, winY, 0, 0, winX, winY, 0x00000000);
+	clearBuffer(framebuffer, winX, winY, 0x00000000);
 
 	viewAngle = playerAngle;
 	
