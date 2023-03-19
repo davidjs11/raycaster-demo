@@ -6,7 +6,7 @@ Raycasting is a popular 3D rendering method used in the first 3D games back in t
 
 ## Current status:
 Improved the input system and added more modularity. Bugs will be fixed soon\
-![current_status](screenshots/vid.gif)
+<a href="url"><img src="screenshots/video.gif" align="center" height="400" width="400" ></a>
 
 ## To-do:
 - Fix some bugs in the rendering.
