@@ -106,10 +106,10 @@ int main(void)
 		// object is
 		if (!viewMap && wall != ' ')
 		{
-		    //size_t columnHeight = winY/j;
+		    size_t columnHeight = winY/(j*cos(viewAngle-player.angle));
 
-		    renderRect(framebuffer, winX, winY, i, winY/2-(winY/j)/2,
-			       1, (winY/j), color);
+		    renderRect(framebuffer, winX, winY, i, winY/2-columnHeight/2,
+			       1, columnHeight, color);
 		    break;
 		}
 	    }
@@ -117,7 +117,6 @@ int main(void)
 
 	// render the buffer
 	renderBuffer(rend, framebuffer, winX, winY);
-	printf("frame: %d\n", frame);
 	frame++;
     }
 

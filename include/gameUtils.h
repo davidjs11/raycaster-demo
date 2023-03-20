@@ -4,6 +4,8 @@
 #include <math.h>
 #include <stdint.h>
 
+// struct that contains the necessary info for a entity
+// like the player, an enemy, an object...
 struct entity
 {
     float posX;
