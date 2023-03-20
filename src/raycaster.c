@@ -50,6 +50,7 @@ int main(void)
     float viewAngle;
     float castX = 0, castY = 0;
     float fov = M_PI/3.0; // 60º
+    int frame = 0;
 
     // init the graphic engine
     initSDL("raycaster", &window, &rend, winX, winY);
@@ -61,7 +62,7 @@ int main(void)
 	// input
 	processInput(&event, input);
 	running = !(input[KEY_QUIT]);
-
+	
 	// controls
 	moveEntity(&player, input[KEY_W], input[KEY_S]);
 	rotateEntity(&player, input[KEY_A], input[KEY_D]);
@@ -70,8 +71,6 @@ int main(void)
 	// render background
 	clearBuffer(framebuffer, winX, winY, 0x00000000);
 
-	viewAngle = player.angle;
-	
 	// render the map 
 	if (viewMap)
 	    renderMap(framebuffer, map, mapX, mapY, winX, winY, boxX, boxY);
@@ -81,7 +80,7 @@ int main(void)
 	{
 	    // modify ray direction
 	    viewAngle = player.angle-fov/2 + fov*i/winX;
-	    for (float j=0; j<16; j+=0.025)
+	    for (float j=0; j<16; j+=0.04)
 	    {
 		// move the point to form the ray
 		castX = player.posX + j*cos(viewAngle);
@@ -89,7 +88,8 @@ int main(void)
 		char wall = map[(int)castX + (int)castY*mapX];
 
 		// set color
-		if (wall == '1') color = 0x000000FF;
+		if (wall == '0') color = 0x0000FFFF;
+		else if (wall == '1') color = 0x000000FF;
 		else if (wall == '2') color = 0x0000FF00;
 		else if (wall == '3') color = 0x00FF0000;
 
@@ -106,10 +106,10 @@ int main(void)
 		// object is
 		if (!viewMap && wall != ' ')
 		{
-		    size_t columnHeight = winY/j;
+		    //size_t columnHeight = winY/j;
 
-		    renderRect(framebuffer, winX, winY, i, winY/2-columnHeight/2,
-			       1, columnHeight, color);
+		    renderRect(framebuffer, winX, winY, i, winY/2-(winY/j)/2,
+			       1, (winY/j), color);
 		    break;
 		}
 	    }
@@ -117,6 +117,8 @@ int main(void)
 
 	// render the buffer
 	renderBuffer(rend, framebuffer, winX, winY);
+	printf("frame: %d\n", frame);
+	frame++;
     }
 
 }
