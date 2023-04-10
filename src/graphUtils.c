@@ -34,21 +34,17 @@ void renderMap(uint32_t *buffer, const char *map, size_t mapX, size_t mapY,
     uint32_t color = 0x00000000;
 
     for (int i=0; i<mapX; i++)
-	for (int j=0; j<mapY; j++)
-	{
-	    wall = map[i+j*mapX];
-	    if (wall == ' ')
-		continue;
-	    else if (wall == '0')
-		color = 0x0000FFFF;
-	    else if (wall == '1')
-		color = 0x000000FF;
-	    else if (wall == '2')
-		color = 0x0000FF00;
-	    else if (wall == '3')
-		color = 0x00FF0000;
+	    for (int j=0; j<mapY; j++)
+	    {
+	        wall = map[i+j*mapX];
+	        if (wall == ' ')
+		        continue;
+	        else if (wall == '0') color = 0x0000FFFF;
+	        else if (wall == '1') color = 0x000000FF;
+	        else if (wall == '2') color = 0x0000FF00;
+	        else if (wall == '3') color = 0x00FF0000;
 
-	    renderRect(buffer, winX, winY, i*boxX, j*boxY,
-		    boxX, boxY, color);
-	}
+	        renderRect(buffer, winX, winY, i*boxX, j*boxY,
+		               boxX, boxY, color);
+	    }
 }
