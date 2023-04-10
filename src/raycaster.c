@@ -88,7 +88,7 @@ int main(void)
 		        char wall = map[(int)castX + (int)castY*mapX];
 
 		        // set color
-		        if (wall == '0') color = 0x0000FFFF;
+		        if (wall == '0')      color = 0x0000FFFF;
 		        else if (wall == '1') color = 0x000000FF;
 		        else if (wall == '2') color = 0x0000FF00;
 		        else if (wall == '3') color = 0x00FF0000;
@@ -102,18 +102,20 @@ int main(void)
 		            framebuffer[pX + pY*winY] = 0x00FFFFFF; 
 		        }
 
-		    // render the line whose length will depend on how far the next
-		    // object is
-		    if (!viewMap && wall != ' ')
-		    {
-		        size_t columnHeight = winY/(j*cos(viewAngle-player.angle));
+		        // render the line whose length will depend on how far 
+		        // the next object is
+		        if (!viewMap && wall != ' ')
+		        {
+		            size_t columnHeight = winY/
+                                      (j*cos(viewAngle-player.angle));
 
-		        renderRect(framebuffer, winX, winY, i, winY/2-columnHeight/2,
-			                1, columnHeight, color);
-		        break;
-		    }
+		            renderRect(framebuffer, winX, winY,
+                               i, winY/2-columnHeight/2,
+			                   1, columnHeight, color);
+		            break;
+		        }
+	        }
 	    }
-	}
 
 	// render the buffer
 	renderBuffer(rend, framebuffer, winX, winY);
